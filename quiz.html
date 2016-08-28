@@ -50,7 +50,7 @@ TODO/problemer:
         </div>
 
         <script type="text/javascript">
-            ethics = 0;
+            var ethics = 0;
             $("#ferdig").hide();
             $("body").hide();
             $("#nyttSpill").hide();
@@ -67,10 +67,9 @@ TODO/problemer:
                            tall++;
                            //Prevents buttons doing anything after quiz has ended
                            if(tall <= 10){
+                               //Answer "Yes"
                                randomSpm(1);
                                console.log(tall);
-                           } else {
-                               //Do nothing
                            }
                        }
                     });
@@ -81,10 +80,9 @@ TODO/problemer:
                            tall++;
                            //Prevents buttons doing anything after quiz has ended
                            if(tall <= 10){
+                               //Answer "No"
                                randomSpm(2);
                                console.log(tall);
-                           } else {
-                               //Do nothing
                            }
                        }
                     });
@@ -127,74 +125,40 @@ TODO/problemer:
             
             /*Changes the background gradient*/
             function fargeEndre(value){
-                /*The positive case*/
+                //Value === 1 is positive case.
+                //Value === 2 is negative case.
                 if(value === 1){
-                    switch(ethics){
-                        case -2:
-                            $(body).css("background", getBackg("sad"));
-                            $("#bilde").attr("src","bilder/sad.png");
-                            ethics ++;
-                            //console.log(ethics);
-                            break;
-                        case -1:
-                            $(body).css("background", getBackg("neutral"));
-                            $("#bilde").attr("src","bilder/neutral.png");
-                            ethics ++;
-                            //console.log(ethics);
-                            break;
-                        case 0:
-                            $(body).css("background", getBackg("happy"));
-                            $("#bilde").attr("src","bilder/happy.png");
-                            ethics ++;
-                            //console.log(ethics);
-                            break;
-                        case 1:
-                            $(body).css("background", getBackg("happy2"));
-                            $("#bilde").attr("src","bilder/happy2.png");
-                            ethics ++;
-                            //console.log(ethics);
-                            break;
-                        case 2:
-                            break;
-                    }
+                    if(ethics < 3) ethics ++;
+                }else if(value === 2){
+                    if(ethics > -3) ethics --;
                 }
-                /*The negative case*/
-                if(value === 2){
-                    switch(ethics){
-                        case -2:
-                            console.log(ethics);
-                            break;
-                        case -1:
-                            $(body).css("background", getBackg("sad2"));
-                            $("#bilde").attr("src","bilder/sad2.png");
-                            ethics --;
-                            //console.log(ethics);
-                            break;
-                        case 0:
-                            $(body).css("background", getBackg("sad"));
-                            $("#bilde").attr("src","bilder/sad.png");
-                            ethics --;
-                            //console.log(ethics);
-                            break;
-                        case 1:
-                            $(body).css("background", getBackg("neutral"));
-                            $("#bilde").attr("src","bilder/neutral.png");
-                            ethics --;
-                            //console.log(ethics);
-                            break;
-                        case 2:
-                            $(body).css("background", getBackg("happy")); 
-                            $("#bilde").attr("src","bilder/happy.png");
-                            ethics --;
-                            //console.log(ethics);
-                            break;
-                    }
+                switch(ethics){
+                    case -2:
+                        $(body).css("background", getBackg("sad"));
+                        $("#bilde").attr("src","bilder/sad2.png");
+                        break;
+                    case -1:
+                        $(body).css("background", getBackg("sad"));
+                        $("#bilde").attr("src","bilder/sad.png");
+                        break;
+                    case 0:
+                        $(body).css("background", getBackg("neutral"));
+                        $("#bilde").attr("src","bilder/neutral.png");
+                        break;
+                    case 1:
+                        $(body).css("background", getBackg("happy"));
+                        $("#bilde").attr("src","bilder/happy.png");
+                        break;
+                    case 2:
+                        $(body).css("background", getBackg("happy2"));
+                        $("#bilde").attr("src","bilder/happy2.png");
+                        break;
                 }
+                //console.log(ethics);
             }
             
             var res;
             var antall;
-            
             /*
              * Lazy fix to global scope problem.
              */
@@ -209,13 +173,14 @@ TODO/problemer:
              * on the 'ethic'. 
              * */
             function spm(){
-                var spmnr0 = {spm: "Kan hacking være positivt?", tall: "Nei"};
-                var spmnr1 = {spm: "Burde myndighetene få lov til å hacke kriminelle?", tall: "Ja"};
-                var spmnr2 = {spm: "Burde hacking være ulovlig?", tall: "Ja"};
-                var spmnr3 = {spm: "Er hacking av myndighetene kult?", tall: "Ja"};
-                
-                var nr = "spmnr" + (Math.floor(Math.random() * 4) + 0);
-                res = eval(nr); //Evaluates the string as if it was a variable, making it usable later.
+                var questions =[
+                    {spm: "Kan hacking være positivt?", tall: "Nei"},
+                    {spm: "Burde myndighetene få lov til å hacke kriminelle?", tall: "Ja"},
+                    {spm: "Burde hacking være ulovlig?", tall: "Ja"},
+                    {spm: "Er hacking av myndighetene kult?", tall: "Ja"}
+                ];
+                var nr = (Math.floor(Math.random() * 4) + 0);
+                res = questions[nr];
             }
             
             function randomSpm(val){
@@ -238,11 +203,6 @@ TODO/problemer:
                     $("#ramme").hide();
                     switch(ethics){
                         case -2:
-                            $("#ferdigText").html("Du ble Black Hat");
-                            $.get('file_to_read.txt', function(data) {
-                                do_something_with(data);
-                             }, 'text');
-                            break;
                         case -1:
                             $("#ferdigText").html("Du ble Black Hat");
                             break;
@@ -250,8 +210,6 @@ TODO/problemer:
                             $("#ferdigText").html("Du ble Nøytral");//Fix this?
                             break;
                         case 1:
-                            $("#ferdigText").html("Du ble White Hat");
-                            break;
                         case 2:
                             $("#ferdigText").html("Du ble White Hat");
                             break;
@@ -298,27 +256,19 @@ TODO/problemer:
              */
             function sjekkSvar(alt) {
                 if(res){
-                    if(res.tall === "Ja"){
+                    if(res.tall === "Ja"){ //Negative answer is "Ja"
                         if(alt === 1){
                             fargeEndre(2);
                         } else if(alt === 2) {
                             fargeEndre(1);
-                        } else {
-                            //Do nothing
                         }
-                    } else if(res.tall === "Nei") {
+                    } else if(res.tall === "Nei") { //Negative answer is "Nei"
                         if(alt === 1){
                             fargeEndre(1);
                         } else if(alt === 2) {
                             fargeEndre(2);
-                        } else {
-                            //Do nothing
                         }
-                    } else {
-                        //Do nothing
                     }
-                } else {
-                    //Do nothing
                 }
             }
         </script>
